@@ -1,10 +1,7 @@
 package com.example.Dividends.persist.entity;
 
 import com.example.Dividends.model.Dividend;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -15,6 +12,16 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @ToString
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        columnNames = {
+                                "companyId",
+                                "date"
+                        }
+                )
+        }
+)
 public class DividendEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

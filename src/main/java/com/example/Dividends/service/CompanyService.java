@@ -1,5 +1,6 @@
 package com.example.Dividends.service;
 
+import com.example.Dividends.exception.impl.NoCompanyException;
 import com.example.Dividends.model.Company;
 import com.example.Dividends.model.ScrapedResult;
 import com.example.Dividends.persist.CompanyRepository;
@@ -8,21 +9,20 @@ import com.example.Dividends.persist.entity.CompanyEntity;
 import com.example.Dividends.persist.entity.DividendEntity;
 import com.example.Dividends.scraper.Scraper;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
+import org.apache.commons.collections4.Trie;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import javax.swing.text.html.parser.Entity;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class CompanyService {
+    private final Trie<String, String> trie;
     private final Scraper scraper;
 
     private final CompanyRepository companyRepository;
@@ -34,6 +34,22 @@ public class CompanyService {
         }
 
         return storeCompanyAndDividend(ticker);
+    }
+
+    public Page<CompanyEntity> getAllCompany(Pageable pageable) {
+        return companyRepository.findAll(pageable);
+    }
+
+    public Company addCompany(Company request) {
+        String ticker = request.getTicker().trim();
+        if (ObjectUtils.isEmpty(ticker)) {
+            throw new RuntimeException("ticker is empty");
+        }
+
+        Company company = save(ticker);
+        addAutocompleteKeyword(company.getName());
+
+        return company;
     }
 
     private Company storeCompanyAndDividend(String ticker) {
@@ -59,6 +75,40 @@ public class CompanyService {
 
         dividendRepository.saveAll(entityList);
         return company;
+    }
+
+    public void addAutocompleteKeyword(String keyword) {
+        trie.put(keyword, null);
+    }
+
+    public List<CompanyEntity> autocomplete(String keyword) {
+        List<String> companyList = trie.prefixMap(keyword).keySet().stream().toList();
+        return companyList.stream().map(c -> companyRepository.findByName(c)
+                .orElseThrow(NoCompanyException::new)).toList();
+    }
+
+    public void deleteAutocompleteKeyword(String keyword) {
+        trie.remove(keyword);
+    }
+
+
+    public List<String> getCompanyNamesByKeyword(String keyword, Pageable pageable) {
+        return companyRepository.findByNameStartingWithIgnoreCase(keyword, pageable)
+                .stream()
+                .map(CompanyEntity::getName)
+                .toList();
+    }
+
+    public String deleteCompany(String ticker) {
+        CompanyEntity companyEntity = companyRepository.findByTicker(ticker)
+                .orElseThrow(NoCompanyException::new);
+
+        dividendRepository.deleteAllByCompanyId(companyEntity.getId());
+        companyRepository.delete(companyEntity);
+
+        deleteAutocompleteKeyword(companyEntity.getName());
+
+        return companyEntity.getName();
     }
 
 }

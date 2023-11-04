@@ -2,7 +2,6 @@ package com.example.Dividends.model;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,9 +10,10 @@ import java.util.List;
  */
 
 @Data
-@Builder
 @Getter
+@Setter
 @AllArgsConstructor
+@Builder
 public class ScrapedResult {
     private Company company;
     private List<Dividend> dividendEntities;

@@ -19,3 +19,15 @@ spring:
     url: jdbc:h2:mem:dividends;DB_CLOSE_DELAY=-1
     username: sa
     password:
+
+  redis:
+    host: localhost
+    port: 6379
+
+  jwt:
+    secret: emVyby1iYXNlLXNwcmluZy1ib290LWRpdmlkZW5kLXR1dG9yaWFsLWp3dC1zZWNyZXQta2V5
+
+scheduler:
+  scrap:
+    yahoo: 0 0 0 * * *
+

@@ -67,10 +67,13 @@ public class YahooFinanceScraper implements Scraper {
         int year = Integer.parseInt(splits[2]);
         String dividend = splits[3];
 
+        return new Dividend(LocalDateTime.of(year, month, day, 0, 0), dividend);
+        /*
         return Dividend.builder()
                 .date(LocalDateTime.of(year, month, day, 0, 0))
                 .dividend(dividend)
                 .build();
+                */
     }
 
     // 티커로 회사명을 가져온다.
@@ -84,10 +87,12 @@ public class YahooFinanceScraper implements Scraper {
             // abc - def - ghi -> def
             String title = titleElement.text().split(" \\(")[0].trim();
 
+
             return Company.builder()
                     .ticker(ticker)
                     .name(title)
                     .build();
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
