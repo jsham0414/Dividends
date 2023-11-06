@@ -17,6 +17,7 @@ import java.util.List;
 public class ScrapedResult {
     private Company company;
     private List<Dividend> dividendEntities;
+
     public ScrapedResult() {
         dividendEntities = new ArrayList<>();
     }

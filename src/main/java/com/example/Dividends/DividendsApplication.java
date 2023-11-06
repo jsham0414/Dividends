@@ -9,8 +9,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @EnableCaching
 public class DividendsApplication {
-	public static void main(String[] args) {
-		SpringApplication.run(DividendsApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(DividendsApplication.class, args);
+    }
 
 }

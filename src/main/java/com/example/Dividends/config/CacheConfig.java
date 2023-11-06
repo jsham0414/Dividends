@@ -18,13 +18,11 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @RequiredArgsConstructor
 @Configuration
 public class CacheConfig {
+    private final ObjectMapper objectMapper;
     @Value("${spring.redis.host}")
     private String host;
-
     @Value("${spring.redis.port}")
     private int port;
-
-    private final ObjectMapper objectMapper;
 
     @Bean
     public CacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {

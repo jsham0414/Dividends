@@ -11,7 +11,10 @@ import java.util.Optional;
 @Repository
 public interface CompanyRepository extends JpaRepository<CompanyEntity, Long> {
     boolean existsByTicker(String ticker);
+
     Optional<CompanyEntity> findByName(String name); // NullPointerException 방지, isPresent
+
     Page<CompanyEntity> findByNameStartingWithIgnoreCase(String keyword, Pageable pageable);
+
     Optional<CompanyEntity> findByTicker(String ticker);
 }

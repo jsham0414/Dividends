@@ -34,7 +34,6 @@ public class TokenProvider {
         var expiredDate = new Date(now.getTime() + TOKEN_EXPIRE_TIME);
 
 
-
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
